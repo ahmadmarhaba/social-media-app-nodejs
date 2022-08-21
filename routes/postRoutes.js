@@ -16,12 +16,13 @@ router.post("/create", verifyUser, async (req, res, next) => {
     if(!req.body.text || req.body.text.trim().length == 0) return;
 
     const post = new Post({
-        Parent_ID : req.body.contentID.trim(),
+        Parent_ID : req.body.contentID,
         Post_Title : req.body.title.trim(),
         Post_Text : req.body.text.trim(),
         User_ID : req.user._id,
         Post_Date : Date.now(),
         Post_Flag : "active",
+        Post_Edited : false,
         Post_MediaUrl : "",
         Post_MediaFiles : "",
         Post_MediaFolder : "",
@@ -112,11 +113,9 @@ router.post("/edit", verifyUser, async (req, res, next) => {
     if(!req.user._id) return;
     if(!req.body.contentID) return;
     if(!req.body.text || req.body.text.trim().length == 0) return;
-    if(req.body.title && req.body.title.trim().length == 0) return;
-    if(req.body.title.trim().length == 0) req.body.title = null
     
     Post.updateOne({ _id : req.body.contentID, User_ID : req.user._id  }, 
-      { $set: { Post_Text : req.body.text.trim() , Post_Title : req.body.title.trim()  } }
+      { $set: { Post_Text : req.body.text.trim() , Post_Edited : true } }
       ).then(async (doc) => {
 
       }).then((data)=>{

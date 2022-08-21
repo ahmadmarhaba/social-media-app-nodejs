@@ -26,6 +26,10 @@ const Post = new Schema({
         type: String,
         default: "",
     },
+    Post_Edited: {
+        type: Boolean,
+        default: false,
+    },
     Post_MediaUrl: {
         type: String,
         default: "",

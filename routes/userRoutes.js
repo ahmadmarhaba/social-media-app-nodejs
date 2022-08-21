@@ -155,8 +155,8 @@ router.post("/login", passport.authenticate("local"), (req, res, next) => {
   router.post("/search", verifyUser, async (req, res, next) => {
     if(!req.user._id) return;
     if(!req.body.name) return;
-
-    User.find({name : {$regex : req.body.name}}, {name:1}).then(async (docs) => {
+    let name = req.body.name.trim()
+    User.find({name : {$regex : new RegExp(name, "i")}}, {name:1}).then(async (docs) => {
         let arr = [];
         docs.forEach(doc => {
           arr.push(doc.name);
