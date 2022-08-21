@@ -39,7 +39,7 @@ User.set("toJSON", {
     return ret
   },
 })
-
+User.index({name: 'text'});
 User.plugin(passportLocalMongoose)
 
 module.exports = mongoose.model("User", User)

@@ -53,7 +53,7 @@ router.post("/login", passport.authenticate("local"), (req, res, next) => {
     const token = getToken({ _id: req.user._id })
     const refreshToken = getRefreshToken({ _id: req.user._id })
     User.findById(req.user._id).then(
-      user => {
+      user => {res
         user.refreshToken.push({ refreshToken })
         user.save((err, user) => {
           if (err) {
@@ -61,6 +61,8 @@ router.post("/login", passport.authenticate("local"), (req, res, next) => {
             res.send(err)
           } else {
             res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS)
+
+            // console.log(refreshToken,req.signedCookies.refreshToken)
             res.send({ success: true, token })
           }
         })
@@ -71,11 +73,11 @@ router.post("/login", passport.authenticate("local"), (req, res, next) => {
   router.post("/refreshToken", (req, res, next) => {
     const { signedCookies = {} } = req
     const { refreshToken } = signedCookies
-
     if (refreshToken) {
       try {
         const payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
-        const userId = payload._id
+        const userId = payload._id;
+        
         User.findOne({ _id: userId }).then(
           user => {
             if (user) {
@@ -83,7 +85,6 @@ router.post("/login", passport.authenticate("local"), (req, res, next) => {
               const tokenIndex = user.refreshToken.findIndex(
                 item => item.refreshToken === refreshToken
               )
-  
               if (tokenIndex === -1) {
                 res.statusCode = 401
                 res.send("Unauthorized")
@@ -149,6 +150,23 @@ router.post("/login", passport.authenticate("local"), (req, res, next) => {
       },
       err => next(err)
     )
+  })
+
+  router.post("/search", verifyUser, async (req, res, next) => {
+    if(!req.user._id) return;
+    if(!req.body.name) return;
+
+    User.find({name : {$regex : req.body.name}}, {name:1}).then(async (docs) => {
+        let arr = [];
+        docs.forEach(doc => {
+          arr.push(doc.name);
+        });
+        return arr
+      }).then((data)=>{
+        res.send({ success: true , users : data })
+      }).catch(err =>{
+        res.send({ success: false })
+      });
   })
 
 module.exports = router

@@ -11,14 +11,14 @@ const {
 router.post("/create", verifyUser, async (req, res, next) => {
     if(!req.user._id) return;
     if(req.body.contentID && req.body.title) return;
-    if(req.body.title && req.body.title.length == 0) return;
+    if(req.body.title && req.body.title.trim().length == 0) return;
     if(!req.body.contentID && !req.body.title) return;
-    if(!req.body.text || req.body.text.length == 0) return;
+    if(!req.body.text || req.body.text.trim().length == 0) return;
 
     const post = new Post({
-        Parent_ID : req.body.contentID,
-        Post_Title : req.body.title,
-        Post_Text : req.body.text,
+        Parent_ID : req.body.contentID.trim(),
+        Post_Title : req.body.title.trim(),
+        Post_Text : req.body.text.trim(),
         User_ID : req.user._id,
         Post_Date : Date.now(),
         Post_Flag : "active",
@@ -111,12 +111,12 @@ router.post("/interact", verifyUser, async (req, res, next) => {
 router.post("/edit", verifyUser, async (req, res, next) => {
     if(!req.user._id) return;
     if(!req.body.contentID) return;
-    if(!req.body.text || req.body.text.length == 0) return;
-    if(req.body.title && req.body.title.length == 0) return;
-    if(req.body.title.length == 0) req.body.title = null
+    if(!req.body.text || req.body.text.trim().length == 0) return;
+    if(req.body.title && req.body.title.trim().length == 0) return;
+    if(req.body.title.trim().length == 0) req.body.title = null
     
-    Post.updateOne({ _id : req.body.contentID }, 
-      { $set: { Post_Text : req.body.text , Post_Title : req.body.title  } }
+    Post.updateOne({ _id : req.body.contentID, User_ID : req.user._id  }, 
+      { $set: { Post_Text : req.body.text.trim() , Post_Title : req.body.title.trim()  } }
       ).then(async (doc) => {
 
       }).then((data)=>{
@@ -129,7 +129,7 @@ router.post("/delete", verifyUser, async (req, res, next) => {
   if(!req.user._id) return;
   if(!req.body.contentID) return;
   
-  Post.updateOne({ _id : req.body.contentID }, 
+  Post.updateOne({ _id : req.body.contentID , User_ID : req.user._id }, 
     { $set: { Post_Flag : "inactive"  } }
     ).then(async (doc) => {
 
