@@ -8,7 +8,6 @@ const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
 const passport = require("passport")
 const session = require('express-session');
-// let {COOKIE_OPTIONS} = require("./authenticate")
 
 require("./utils/connectdb")
 
@@ -26,18 +25,6 @@ app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(bodyParser.json())
 app.use(passport.initialize())
 app.use(session());
-// app.use(session({ 
-//   secret: process.env.COOKIE_SECRET,
-//   // httpOnly: true,
-//   // Since localhost is not having https protocol,
-//   // secure cookies do not work correctly (in postman)
-//   // secure: false,
-//   // signed: true,
-//   // maxAge: eval(process.env.REFRESH_TOKEN_EXPIRY) * 1000,
-//   // sameSite: "none",
-//   cookie: COOKIE_OPTIONS
-// }));
-
 
 //Add the client URL to the CORS policy
 const whitelist = process.env.WHITELISTED_DOMAINS

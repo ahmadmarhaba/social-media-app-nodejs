@@ -1,2 +1,1 @@
-# social-media-app-nodejs
- 
+This is social media app server made with nodejs, passportjs, and JWT

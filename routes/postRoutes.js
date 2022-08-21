@@ -17,7 +17,7 @@ router.post("/create", verifyUser, async (req, res, next) => {
 
     const post = new Post({
         Parent_ID : req.body.contentID,
-        Post_Title : req.body.title.trim(),
+        Post_Title : req.body.title ? req.body.title.trim() : null,
         Post_Text : req.body.text.trim(),
         User_ID : req.user._id,
         Post_Date : Date.now(),
