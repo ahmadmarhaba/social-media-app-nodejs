@@ -44,19 +44,22 @@ router.post("/create", verifyUser, async (req, res, next) => {
 })
 
 router.post("/fetch", verifyUser, async (req, res, next) => {
+
     if(!req.user._id) return;
+  console.log(req.body)
     let query = { Parent_ID : req.body.parentID , Post_Flag : "active" };
     if(req.body.username && req.body.username.length > 0){
       const searchedUser = await User.findOne({ name: req.body.username });
       searchedUser._id ? query.User_ID = searchedUser._id : null
     }
     const sort = req.body.sort ? -1 : 1
-    Post.find(query).sort( { Post_Date : sort } ).then(async (docs) => {
-        let arr = [];
-        let id = req.user._id.toString();
-        for (let doc of docs){
-            let temp = {...doc._doc};
-            const Content_ID = doc._id.toString();
+    Post.find(query).sort( { Post_Date : sort } ).skip(req.body.page).limit(6).then(async (docs) => {
+      let arr = [];
+      let id = req.user._id.toString();
+      for (let doc of docs){
+          let temp = {...doc._doc};
+          const Content_ID = doc._id.toString();
+            console.log(Content_ID)
             const user = await User.findOne({ _id: doc.User_ID });
             const User_Interacted = await Interaction.findOne({User_ID : id, Content_ID});
             const Users_Agree = await Interaction.find({Content_ID , Action : 1});
