@@ -38,8 +38,6 @@ router.post("/create", verifyUser, async (req, res, next) => {
 router.post("/fetch", verifyUser, async (req, res, next) => {
 
     if(!req.user._id) return;
-    const me = await User.findOne({ _id: req.user._id});
-
     let query = { 
       Parent_ID : req.body.parentID ? mongoose.Types.ObjectId(req.body.parentID) : null,
        Post_Flag : "active",
@@ -49,7 +47,7 @@ router.post("/fetch", verifyUser, async (req, res, next) => {
       query.User_ID = searchedUser._id ? searchedUser._id : null
     }else{
       let followed = []
-      me.followed.forEach(element => {
+      req.user.followed.forEach(element => {
         followed.push({User_ID : element.User_ID})
       });
       if(followed.length === 0){
