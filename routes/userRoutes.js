@@ -121,7 +121,11 @@ router.post("/login", passport.authenticate("local"), (req, res, next) => {
   })
 
   router.get("/me", verifyUser, (req, res, next) => {
-    res.send(req.user)
+    res.send({
+      refreshToken : req.user.refreshToken , 
+      name : req.user.name,
+      image : req.user.image
+    })
   })
 
   router.get("/logout", verifyUser, (req, res, next) => {
@@ -167,6 +171,31 @@ router.post("/login", passport.authenticate("local"), (req, res, next) => {
       }).catch(err =>{
         res.send({ success: false })
       });
+  })
+
+  router.post("/follow", verifyUser, async (req, res, next) => {
+    if(!req.user._id) return;
+    if(!req.body.name) return;
+    let name = req.body.name.trim()
+    const user = await User.findOne({ _id : req.user._id });
+    const user2 = await User.findOne({ name });
+
+    const index = user.followed.findIndex(
+      item => item.User_ID.equals(user2._id)
+    )
+    if (index === -1) {
+      user.followed.push({ User_ID: user2._id })
+    }else{
+      user.followed.id(user.followed[index]._id).remove()
+    }
+    user.save((err, user) => {
+      if (err) {
+        res.statusCode = 500
+        res.send({ success: false })
+      } else {
+        res.send({ success: true, followed : index === -1 })
+      }
+    })
   })
 
 module.exports = router

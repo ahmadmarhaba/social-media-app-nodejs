@@ -9,6 +9,12 @@ const Session = new Schema({
     default: "",
   },
 })
+const Follow = new Schema({
+  User_ID: {
+    type: Object,
+    default: null,
+  },
+})
 
 const User = new Schema({
   name: {
@@ -29,6 +35,9 @@ const User = new Schema({
   },
   refreshToken: {
     type: [Session],
+  },
+  followed: {
+    type: [Follow],
   },
 })
 

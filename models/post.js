@@ -1,14 +1,25 @@
 const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
+const Interaction = new Schema({
+    User_ID: {
+        type: Object,
+        default: null,
+    },
+    Action: {
+        type: Number,
+        default: 0,
+    },
+  })
+
 const Post = new Schema({
     Parent_ID: {
-        type: String,
+        type: Object,
         default: null,
     },
     User_ID: {
-        type: String,
-        default: "",
+        type: Object,
+        default: null,
     },
     Post_Title: {
         type: String,
@@ -41,6 +52,9 @@ const Post = new Schema({
     Post_MediaFolder: {
         type: String,
         default: "",
+    },
+    Interaction: {
+        type: [Interaction],
     },
 })
 
